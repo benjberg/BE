@@ -11,17 +11,17 @@ router.post('/register', (req,res) => {
     user.password = hash;
 
     Users.add(user).then(saved => {
-        res.status(201).json({message: 'user registered!' , saved});
+        res.status(201).json(saved);
 
     }).catch(err =>{
-        res.status(500).json({message: 'an error has occurred'})
+        res.status(500).json({message: 'an error has occurred', err})
     })
 
 })
 
 router.post('/login', (req,res) => {
-    let {username, password} = req.body;
-    Users.findBy({username}).then(([user]) => {
+    let {email, password} = req.body;
+    Users.findBy({email}).then(([user]) => {
         if(user && bcryptjs.compareSync(password, user.password)){
             const token = genToken(user);
             res.status(200).json({message: 'log in successful', token})
@@ -37,7 +37,7 @@ router.post('/login', (req,res) => {
 function genToken(user) {
     const payload = {
         userId: user.id,
-        username: user.username
+        email: user.email
     };
     const secret = secrets.jwtSecret;
     const options = {
