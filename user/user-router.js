@@ -1,19 +1,41 @@
 const router = require('express').Router();
-const bcryptjs = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const Users = require('../auth/auth-model.js');
-const secrets = require('../data/secrets.js');
+const authenticate = require('../auth/authenticate-middleware.js');
 
-router.get('/:id',  (req,res) => {
+router.get('/:id', authenticate, (req,res) => {
     const id = req.params.id;
-    const requestOptions = {
-        headers: { accept: 'application/json' },
-      };
+   
   try{
-    Users.find(id, requestOptions).then(response => res.send(response));
+    Users.findById(id).then(response => res.send(response));
   } catch{
     res.status(500).json({message: 'an error has occurred'})
   }
+})
+router.get('/:id/strains', async (req,res)  =>{
+  
+    let id = req.params.id;
+    
+   await Users.findById(id)
+        .then(() => {
+           Users.getSavedStrains(id)
+                .then(strain => res.send(strain))
+                .catch( res.status(500).json({message: 'error'}));
+        }).catch(() => res.sendStatus(404));
+        
+})
+
+router.post('/:id/strains', authenticate, (req,res) =>{
+    
+    try{
+        const id = req.params.id;
+    const strain = Users.saveStrain({
+        user: id,
+        strain: '{}'
+    });
+    res.status(200).json(strain)
+} catch{
+    res.status(500).json({message: 'an error has occurred'})
+}
 })
 
 router.put('/:id', (req,res) => {
@@ -40,5 +62,6 @@ router.delete('/:id', async (req, res) =>{
         res.status(500).json({ message: 'an error has occurred'})
     }
 })
+
 
 module.exports = router;
