@@ -11,16 +11,13 @@ router.get('/:id', authenticate, (req,res) => {
     res.status(500).json({message: 'an error has occurred'})
   }
 })
-router.get('/:id/strains', async (req,res)  =>{
+router.get('/:id/strains',  (req,res)  =>{
   
     let id = req.params.id;
-    
-   await Users.findById(id)
-        .then(() => {
-           Users.getSavedStrains(id)
-                .then(strain => res.send(strain))
-                .catch( res.status(500).json({message: 'error'}));
-        }).catch(() => res.sendStatus(404));
+        
+    try{Users.getSavedStrains(id)
+        .then(strain =>  {  res.status(200).send(strain)})}
+     catch{res.status(500).json({message: 'error'})};
         
 })
 
@@ -32,13 +29,13 @@ router.post('/:id/strains', authenticate, (req,res) =>{
         user: id,
         strain: '{}'
     });
-    res.status(200).json(strain)
+  return  res.status(200).json(strain)
 } catch{
-    res.status(500).json({message: 'an error has occurred'})
+  return  res.status(500).json({message: 'an error has occurred'})
 }
 })
 
-router.put('/:id', (req,res) => {
+router.put('/:id', authenticate, (req,res) => {
    
     try{
         const id = req.params.id;
@@ -59,7 +56,7 @@ router.delete('/:id', async (req, res) =>{
         const deleteUser =  await Users.remove(id); 
         if (deleteUser) res.status(200).json({ message: "user deleted"})
     } catch{
-        res.status(500).json({ message: 'an error has occurred'})
+      return  res.status(500).json({ message: 'an error has occurred'})
     }
 })
 
