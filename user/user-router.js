@@ -2,7 +2,7 @@ const router = require('express').Router();
 const Users = require('../auth/auth-model.js');
 const authenticate = require('../auth/authenticate-middleware.js');
 
-router.get('/:id', authenticate, (req,res) => {
+router.get('/:id',  (req,res) => {
     const id = req.params.id;
    
   try{
