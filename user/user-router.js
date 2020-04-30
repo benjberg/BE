@@ -35,7 +35,7 @@ router.post('/:id/strains', authenticate, (req,res) =>{
 }
 })
 
-router.put('/:id', authenticate, (req,res) => {
+router.put('/:id',  (req,res) => {
    
     try{
         const id = req.params.id;
