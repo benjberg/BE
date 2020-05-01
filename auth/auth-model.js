@@ -29,15 +29,15 @@ function find() {
   function findById(user_id) {
     return db('users').where({ user_id }).first();
   }
-  function update(id, changes) {
+  function update(user_id, changes) {
     return db('users')
-      .where('id', id)
+      .where('user_id', user_id)
       .update(changes)
-      .then((count) => (count > 0 ? get(id) : null));
+      .then((count) => (count > 0 ? findById(user_id) : null));
   }
 
-  function remove(id) {
-    return db('users').where('id', id).del();
+  function remove(user_id) {
+    return db('users').where('user_id', user_id).del();
   }
 
   function getStrains() {

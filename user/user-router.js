@@ -1,4 +1,5 @@
 const router = require('express').Router();
+require("dotenv").config();
 const Users = require('../auth/auth-model.js');
 const authenticate = require('../auth/authenticate-middleware.js');
 const bcryptjs = require('bcryptjs');
@@ -7,7 +8,7 @@ router.get('/:id', authenticate, (req,res) => {
     const id = req.params.id;
    
   try{
-    Users.findById(id).then(response => res.send(response));
+    Users.findById(id).then(response =>  response ? res.send(response) : res.status(404).json({message: 'user not found'}));
   } catch{
     res.status(500).json({message: 'an error has occurred'})
   }
@@ -38,12 +39,12 @@ router.post('/:id/strains', authenticate, (req,res) =>{
 
 router.put('/:id', authenticate,  (req,res) => {
     let users = req.body;
-    const rounds = process.env.HASH_ROUNDS || 12;
+    const rounds = process.env.HASH_ROUTER;
     const hash = bcryptjs.hashSync(users.password, rounds);
     users.password = hash;
     try{
-        const id = req.params.id;
-        const user = Users.update(id, {
+        const user_id = req.params.id;
+        const user = Users.update(user_id, {
             name: req.body.name,
             password: req.body.password,
             email: req.body.email
