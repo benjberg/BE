@@ -11,9 +11,7 @@ module.exports = {
   getSavedStrains,
   saveStrain,
 }
-function get(id) {
-  let query = db('actions')
-}
+
 function find() {
     return db('users').select('id', 'name', 'password', 'email');
   }
@@ -23,13 +21,13 @@ function find() {
   }
   
  async function add(user) {
-    const [id] = await db('users').insert(user, 'id');
+    const [id] = await db('users').insert(user, 'user_id');
   
     return findById(id);
   }
   
-  function findById(id) {
-    return db('users').where({ id }).first();
+  function findById(user_id) {
+    return db('users').where({ user_id }).first();
   }
   function update(id, changes) {
     return db('users')
@@ -46,9 +44,6 @@ function find() {
     return db('strains');
 }
 
-function getStrainsByAilment() {
-
-}
 function saveStrain(strain ) {
   return db('saved_strains')
       .insert(strain,  'user_id')
@@ -59,7 +54,7 @@ function saveStrain(strain ) {
 }
 function getSavedStrains(userId) {
   return db('users as u')
-      .join('saved_strains as s','s.user' ,'=', 'u.id' )
+      .join('saved_strains as s','s.user' ,'=', 'u.user_id' )
       .select('s.strain')
       .where('s.user',  userId);
 }

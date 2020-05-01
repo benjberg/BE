@@ -1,8 +1,9 @@
 const router = require('express').Router();
 const Users = require('../auth/auth-model.js');
 const authenticate = require('../auth/authenticate-middleware.js');
+const bcryptjs = require('bcryptjs');
 
-router.get('/:id',  (req,res) => {
+router.get('/:id', authenticate, (req,res) => {
     const id = req.params.id;
    
   try{
@@ -35,8 +36,11 @@ router.post('/:id/strains', authenticate, (req,res) =>{
 }
 })
 
-router.put('/:id',  (req,res) => {
-   
+router.put('/:id', authenticate,  (req,res) => {
+    let users = req.body;
+    const rounds = process.env.HASH_ROUNDS || 12;
+    const hash = bcryptjs.hashSync(users.password, rounds);
+    users.password = hash;
     try{
         const id = req.params.id;
         const user = Users.update(id, {

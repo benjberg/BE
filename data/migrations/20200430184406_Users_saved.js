@@ -1,6 +1,13 @@
 
 exports.up = function(knex) {
-    return knex.schema.createTable('saved_strains', saved_strains => {
+    return knex.schema.createTable('users', users => {
+        users.increments('user_id');
+    
+        users.string('name', 100).notNullable();
+        users.string('password', 100).notNullable();
+        users.string('email', 100).notNullable().unique();
+      })
+      .createTable('saved_strains', saved_strains => {
         saved_strains.increments('saved_strain_id');
         saved_strains.integer('user')
             .unsigned()
@@ -16,5 +23,5 @@ exports.up = function(knex) {
     };
     
     exports.down = function(knex) {
-        return knex.schema.dropTableIfExists("saved_strains");
+      return knex.schema.dropTableIfExists('saved_strains').dropTableIfExists('users');
     };
